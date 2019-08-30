@@ -4,6 +4,7 @@
     {
         public int linhas { get; set; }
         public int colunas { get; set; }
+
         private Peca[,] pecas;
 
         public Tabuleiro(int linhas, int colunas)
@@ -16,6 +17,11 @@
         public Peca peca(int linha, int coluna)
         {
             return pecas[linha, coluna];
+        }
+        public void colocarPeca(Peca p, Posicao pos)
+        {
+            pecas[pos.linha, pos.coluna] = p; // a matriz de peças do tabuleiro recebe a peça que você declarar na posição desejada
+            p.posicao = pos;// essa peça declarada terá sua posição igual a posição desejada na matriz do tabuleiro
         }
     }
 }
