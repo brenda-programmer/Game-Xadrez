@@ -1,6 +1,6 @@
 ﻿namespace tabuleiro
 {
-    class Peca
+    abstract class Peca // se a classe tiver um método abstrato ela também deve ser abstrata.
     {
         public Posicao posicao { get; set; }
         public Cor cor { get; protected set; }
@@ -19,5 +19,9 @@
         {
             qteMovimentos++;
         }
+
+        //O método é abstrato pois ele é genérico, seu conteúdo vai depender do tipo de peça a ser utilizada. Portanto é um método que não vai ser utilizado nesta classe.
+        public abstract bool[,] movimentosPossiveis(); // como é um método abstrato, toda classe que herdar desta, será obrigada a implementar este método
+       
     }
 }
