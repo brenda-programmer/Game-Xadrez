@@ -1,5 +1,7 @@
 ﻿using tabuleiro;
 using System;
+using xadrez;
+
 namespace xadrez_console
 {
     class Tela
@@ -29,6 +31,16 @@ namespace xadrez_console
             }
             System.Console.WriteLine("  ╚═════════════════╝");
             System.Console.WriteLine("    a b c d e f g h");
+        }
+
+
+        //Vai ler a posição que o usuário digitar
+        public static PosicaoXadrez lerPosicaoXadrez()
+        {
+            string s = Console.ReadLine();
+            char coluna = s[0];//pega somente o que estiver na string na posição zero
+            int linha = int.Parse(s[1] + ""); // pega somente o que tem na string na posição 1 e transforma para inteiro (concatena com o espaço para forçar que é string)
+            return new PosicaoXadrez(coluna, linha);
         }
 
         public static void imprimirPeca(Peca peca)

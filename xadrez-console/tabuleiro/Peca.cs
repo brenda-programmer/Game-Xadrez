@@ -14,5 +14,10 @@
             this.tab = tab;
             this.qteMovimentos = 0; // a peça no inicio do jogo tem 0 movimentos
         }
+
+        public void incrementarQteMovimentos()
+        {
+            qteMovimentos++;
+        }
     }
 }
