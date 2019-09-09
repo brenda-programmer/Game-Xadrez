@@ -18,7 +18,7 @@ namespace xadrez
         private bool existeInimigo(Posicao pos)
         {
             Peca p = tab.peca(pos);
-            return p == null && p.cor != cor; // posição não nula e cor da peça diferente - existe inimigo
+            return p != null && p.cor != cor; // posição não nula e cor da peça diferente - existe inimigo
 
         }
 
@@ -37,7 +37,7 @@ namespace xadrez
 
             Posicao pos = new Posicao(0, 0); // inicia uma posição
 
-            /*AGORA INICIA A MARCAÇÃO DAS 8 POSSÍVEIS CASAS EM QUE O PEAO PODE SE MOVER DENTRO DA MATRIZ*/
+            /*AGORA INICIA A MARCAÇÃO DAS POSSÍVEIS CASAS EM QUE O PEAO PODE SE MOVER DENTRO DA MATRIZ*/
 
             if (cor == Cor.Branca)
             {
@@ -79,6 +79,7 @@ namespace xadrez
             }
             else // se cor for preta
             {
+
                 // DIREÇÃO SUL - acessa a casa que está acima do peão, esta passa a ser a posição pos
                 pos.definirValores(posicao.linha + 1, posicao.coluna);
 
