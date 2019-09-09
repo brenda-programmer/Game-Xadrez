@@ -19,20 +19,21 @@
             return pecas[linha, coluna];
         }
 
-        public Peca peca(Posicao pos) // sobrecarga do método peca
+        // sobrecarga do método peca
+        public Peca peca(Posicao pos)
         {
             return pecas[pos.linha, pos.coluna];
         }
 
-        public bool existePeca(Posicao pos) // método para verificar se existe peça em uma dada posição
+        // método para verificar se existe peça em uma dada posição
+        public bool existePeca(Posicao pos) 
         {
             validarPosicao(pos);// validar se a posição é válida, caso for executa a próxima linha, caso não lança uma exceção
             return peca(pos) != null; // se for true significa que existe uma peça naquela posição
         }
         public void colocarPeca(Peca p, Posicao pos)
         {
-            // só posso colocar uma peça onde não tenha nenhuma peça
-            if (existePeca(pos))
+            if (existePeca(pos)) // só posso colocar uma peça onde não tenha nenhuma peça
             {
                 throw new TabuleiroException("Já existe uma peça nessa posição!");
             }
@@ -52,7 +53,8 @@
             return aux;
         }
 
-        public bool posicaoValida(Posicao pos) // método para testar se uma dada posição é valida ou não
+        // método para testar se uma dada posição é valida ou não
+        public bool posicaoValida(Posicao pos) 
         {
             if(pos.linha<0 || pos.linha>=linhas || pos.coluna<0 || pos.coluna >= colunas)
             {
@@ -61,7 +63,8 @@
             return true;
         }
 
-        public void validarPosicao(Posicao pos) // método que recebe uma posição e, caso a posição não passe pelo método posicaoValida, lança uma excessão personalizada
+        // método que recebe uma posição e, caso a posição não passe pelo método posicaoValida, lança uma excessão personalizada
+        public void validarPosicao(Posicao pos) 
         {
             if (!posicaoValida(pos))
             {
