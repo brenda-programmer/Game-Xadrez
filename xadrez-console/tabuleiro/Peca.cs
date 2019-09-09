@@ -19,7 +19,10 @@
         {
             qteMovimentos++;
         }
-
+        public void derementarQteMovimentos()
+        {
+            qteMovimentos--;
+        }
         // esse método vai ver se na matriz movimentosPossiveis existe pelo menos algum valor verdadeiro, para ver se a peça não está bloqueada de movimentos
         public bool existeMovimentosPossiveis()
         {
