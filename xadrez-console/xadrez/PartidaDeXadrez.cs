@@ -71,8 +71,17 @@ namespace xadrez
             {
                 xeque = false;
             }
-            turno++; // passa para o próximo turno
-            mudaJogador(); // troca o jogador
+
+            if (testeXequeMate(adversária(jogadorAtual))) // Se o jogador adversário estiver em xeque-mate
+            {
+                terminada = true;
+            }
+            else
+            {
+                turno++; // passa para o próximo turno
+                mudaJogador(); // troca o jogador
+            }
+            
         }
 
         //método que testa se a posição de origem digitada é válida
@@ -197,6 +206,41 @@ namespace xadrez
             return false; //se após a varredura de todas as peças adversárias, nenhuma delas tem movimento até o rei, significa que o rei não está em xeque
         }
 
+        //metodo que verifica movimentos possíveis de todas as peças da cor do rei para tirá-lo do xeque, se não tiver é xeque-mate
+        public bool testeXequeMate(Cor cor)
+        {
+            if (!estaEmXeque(cor))
+            {
+                return false;
+            }
+            foreach(Peca x in pecasEmJogo(cor))
+            {
+                bool[,] mat = x.movimentosPossiveis(); // pega a matriz de movimentos possíveis dessa peça x
+                for(int i=0; i < tab.linhas; i++) // verificando cada movimento possível dessa matriz
+                {
+                    for(int j = 0; j < tab.colunas; j++)
+                    {
+                        if (mat[i, j]) // sendo true, mostra que esta é uma posição possível para esta peça
+                        {
+                            Posicao origem = x.posicao;
+                            Posicao destino = new Posicao(i, j);
+                            Peca pecaCapturada = executaMovimento(origem, destino); // executa um movimento teste da posição em que a peça x está para esta posição possível
+                            bool testeXeque = estaEmXeque(cor); // após executar o movimento, verifica se o rei desta cor ainda está em xeque
+                            desfazMovimento(origem, destino, pecaCapturada); // desfaz movimento executado pelo teste
+
+                            if (!testeXeque) // se o rei não tiver mais em xeque, significa que o movimento feito tira do xeque, então não é xeque-mate
+                            {
+                                return false;
+                            }
+
+                        }
+                    }
+                }
+            }
+            return true; // se nenhuma das peças em quaisquer das suas posições possíveis, retirar o rei do xeque significa que é xeque-mate
+
+        }
+
         //Esse método vai colocar no tabuleiro a peça desejada na posição desejada
         public void colocarNovaPeca(char coluna, int linha, Peca peca) 
         {
@@ -205,20 +249,15 @@ namespace xadrez
         }
         private void colocarPecas()
         {
-           
+ 
             colocarNovaPeca('c', 1, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('c', 2, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('d', 2, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('e', 2, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('e', 1, new Torre(Cor.Branca, tab));
             colocarNovaPeca('d', 1, new Rei(Cor.Branca, tab));
+            colocarNovaPeca('h', 7, new Torre(Cor.Branca, tab));
+            
 
-            colocarNovaPeca('c', 7, new Torre(Cor.Preta, tab));
-            colocarNovaPeca('c', 8, new Torre(Cor.Preta, tab));
-            colocarNovaPeca('d', 7, new Torre(Cor.Preta, tab));
-            colocarNovaPeca('e', 7, new Torre(Cor.Preta, tab));
-            colocarNovaPeca('e', 8, new Torre(Cor.Preta, tab));
-            colocarNovaPeca('d', 8, new Rei(Cor.Preta, tab));
+            colocarNovaPeca('a', 8, new Rei(Cor.Preta, tab));
+            colocarNovaPeca('b', 8, new Torre(Cor.Preta, tab));
+           
 
         }
     }
