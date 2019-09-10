@@ -152,6 +152,22 @@ namespace xadrez
                 throw new TabuleiroException("Você não pode se colocar em xeque!");
             }
 
+            Peca p = tab.peca(destino); // qual a peça que foi movida
+
+            // #jogadaespecial promocao
+            if(p is Peao)
+            {
+                if ((p.cor == Cor.Branca && destino.linha == 0) || (p.cor == Cor.Preta && destino.linha == 7)) // se foi um peão branco que chegou na linha 0 OU foi um peão preto que chegou na linha 7, significa que é uma jogada de promoção
+                {
+                    p = tab.retirarPeca(destino); // esse peão é retirado do tabuleiro
+                    pecas.Remove(p); // remove ele do conjunto de peças em jogo
+
+                    Peca dama = new Dama(p.cor,tab);// cria uma nova rainha da mesma cor do peão
+                    tab.colocarPeca(dama,destino);// coloca a rainha no tabuleiro - troca-se o peão pela rainha
+                    pecas.Add(dama);
+                }
+            }
+
             if (estaEmXeque(adversária(jogadorAtual))) // se o jogador adversário estiver em xeque
             {
                 xeque = true;
@@ -170,8 +186,6 @@ namespace xadrez
                 turno++; // passa para o próximo turno
                 mudaJogador(); // troca o jogador
             }
-
-            Peca p = tab.peca(destino); // qual a peça que foi movida
 
             // #jogadaespecial en passant
             if(p is Peao && (destino.linha==origem.linha-2 || destino.linha == origem.linha + 2)) // se a peça que foi movida é um peão E se ela duas linhas a mais OU a menos
