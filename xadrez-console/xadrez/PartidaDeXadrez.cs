@@ -39,6 +39,28 @@ namespace xadrez
                 capturadas.Add(pecaCapturada);
             }
 
+            // #jogadaespecial roque pequeno
+            if(p is Rei && destino.coluna == origem.coluna + 2)  // Verifica se está ocorrendo um roque pequeno: se a peça for um rei E se ele foi movido duas casas para a direita
+            {
+                Posicao origemT = new Posicao(origem.linha, origem.coluna + 3); // define a posição origem da torre: como se trata de um roque pequeno, a posição da torre é exatamente 3 casas a direita da posição do rei em sua origem
+                Posicao destinoT = new Posicao(origem.linha, origem.coluna + 1); // define a posição destino da torre: a torre passa ocupar uma casa a direita do rei em sua origem
+                Peca T = tab.retirarPeca(origemT); // define a retirada da torre de sua origem
+
+                T.incrementarQteMovimentos(); // incrementa a quantidade de movimentos dessa torre
+                tab.colocarPeca(T, destinoT); //coloca a torre na posição de destino definida
+            }
+
+            // #jogadaespecial roque grande
+            if (p is Rei && destino.coluna == origem.coluna - 2)  // Verifica se está ocorrendo um roque grande: se a peça for um rei E se ele foi movido duas casas para a esquerda
+            {
+                Posicao origemT = new Posicao(origem.linha, origem.coluna - 4); // define a posição origem da torre: como se trata de um roque grande, a posição da torre é exatamente 4 casas a esquerda da posição do rei em sua origem
+                Posicao destinoT = new Posicao(origem.linha, origem.coluna - 1); // define a posição destino da torre: a torre passa ocupar uma casa a esquerda do rei em sua origem
+                Peca T = tab.retirarPeca(origemT); // define a retirada da torre de sua origem
+
+                T.incrementarQteMovimentos(); // incrementa a quantidade de movimentos dessa torre
+                tab.colocarPeca(T, destinoT); //coloca a torre na posição de destino definida
+            }
+
             return pecaCapturada;
         }
 
@@ -52,7 +74,30 @@ namespace xadrez
                 capturadas.Remove(pecaCapturada); // essa peça não faz mais parte do conjunto de peças capturadas
             }
             tab.colocarPeca(p, origem);
+
+            // #jogadaespecial roque pequeno
+            if (p is Rei && destino.coluna == origem.coluna + 2)  // Verifica se está ocorrendo um roque pequeno: se a peça for um rei E se ele foi movido duas casas para a direita
+            {
+                Posicao origemT = new Posicao(origem.linha, origem.coluna + 3); // define a posição origem da torre: como se trata de um roque pequeno, a posição da torre é exatamente 3 casas a direita da posição do rei em sua origem
+                Posicao destinoT = new Posicao(origem.linha, origem.coluna + 1); // define a posição destino da torre: a torre passa ocupar uma casa a direita do rei em sua origem
+                Peca T = tab.retirarPeca(destinoT); // define a retirada da torre do seu destino
+
+                T.derementarQteMovimentos(); // decrementa a quantidade de movimentos dessa torre
+                tab.colocarPeca(T, origemT); //recoloca a torre na posição de origem definida
+            }
+
+            // #jogadaespecial roque grande
+            if (p is Rei && destino.coluna == origem.coluna - 2)  // Verifica se está ocorrendo um roque grande: se a peça for um rei E se ele foi movido duas casas para a esquerda
+            {
+                Posicao origemT = new Posicao(origem.linha, origem.coluna - 4); // define a posição origem da torre: como se trata de um roque grande, a posição da torre é exatamente 4 casas a esquerda da posição do rei em sua origem
+                Posicao destinoT = new Posicao(origem.linha, origem.coluna - 1); // define a posição destino da torre: a torre passa ocupar uma casa a esquerda do rei em sua origem
+                Peca T = tab.retirarPeca(destinoT); //  define a retirada da torre do seu destino
+
+                T.derementarQteMovimentos(); //decrementa a quantidade de movimentos dessa torre
+                tab.colocarPeca(T, origemT); //recoloca a torre na posição de origem definida
+            }
         }
+
         public void realizaJogada(Posicao origem, Posicao destino)
         {
             Peca pecaCapturada = executaMovimento(origem, destino); // ao executar um movimento uma peça é capturada
@@ -254,7 +299,7 @@ namespace xadrez
             colocarNovaPeca('b', 1, new Cavalo(Cor.Branca, tab));
             colocarNovaPeca('c', 1, new Bispo(Cor.Branca, tab));
             colocarNovaPeca('d', 1, new Dama(Cor.Branca, tab));
-            colocarNovaPeca('e', 1, new Rei(Cor.Branca, tab));
+            colocarNovaPeca('e', 1, new Rei(Cor.Branca, tab, this));
             colocarNovaPeca('f', 1, new Bispo(Cor.Branca, tab));
             colocarNovaPeca('g', 1, new Cavalo(Cor.Branca, tab));
             colocarNovaPeca('h', 1, new Torre(Cor.Branca, tab));
@@ -272,7 +317,7 @@ namespace xadrez
             colocarNovaPeca('b', 8, new Cavalo(Cor.Preta, tab));
             colocarNovaPeca('c', 8, new Bispo(Cor.Preta, tab));
             colocarNovaPeca('d', 8, new Dama(Cor.Preta, tab));
-            colocarNovaPeca('e', 8, new Rei(Cor.Preta, tab));
+            colocarNovaPeca('e', 8, new Rei(Cor.Preta, tab, this));
             colocarNovaPeca('f', 8, new Bispo(Cor.Preta, tab));
             colocarNovaPeca('g', 8, new Cavalo(Cor.Preta, tab));
             colocarNovaPeca('h', 8, new Torre(Cor.Preta, tab));
