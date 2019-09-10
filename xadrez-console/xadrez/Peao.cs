@@ -3,10 +3,11 @@ namespace xadrez
 {
     class Peao : Peca // Peao é uma subclasse de Peca
     {
-        public Peao(Cor cor, Tabuleiro tab)
+        private PartidaDeXadrez partida;
+        public Peao(Cor cor, Tabuleiro tab, PartidaDeXadrez partida)
            : base(cor, tab) // repassa a cor e o tab para o construtor da superclasse Peca
         {
-
+            this.partida = partida;
         }
 
         public override string ToString()
@@ -76,6 +77,25 @@ namespace xadrez
                 }
 
 
+                //#jogadaespecial en passant para as peças brancas
+
+                // se a posição desse peão for a linha igual a 3, há possibilidade de ocorrer o en passant
+                if (posicao.linha == 3)
+                {
+                    Posicao esquerda = new Posicao(posicao.linha, posicao.coluna - 1); // só terá En passant se ao lado tiver alguma peça vulnerável, nesse caso está considerando o lado esquerdo                   
+                    if (tab.posicaoValida(esquerda) && existeInimigo(esquerda) && tab.peca(esquerda) == partida.vulneravelEnPassant) // se esse lado for válido E se existe um inimigo lá E se a peça contida lá está vulnerável
+                    {
+                        mat[esquerda.linha -1, esquerda.coluna] = true; // se as condições forem atendidas, a matriz de movimentos possíveis do peão recebe uma nova posição possível 
+                    }
+
+
+                    Posicao direita = new Posicao(posicao.linha, posicao.coluna + 1); // só terá En passant se ao lado tiver alguma peça vulnerável, nesse caso está considerando o lado direito
+                    if (tab.posicaoValida(direita) && existeInimigo(direita) && tab.peca(direita) == partida.vulneravelEnPassant) // se esse lado for válido E se existe um inimigo lá E se a peça contida lá está vulnerável
+                    {
+                        mat[direita.linha -1, direita.coluna] = true; // se as condições forem atendidas, a matriz de movimentos possíveis do peão recebe uma nova posição possível 
+                    }
+                }
+
             }
             else // se cor for preta
             {
@@ -112,6 +132,25 @@ namespace xadrez
                 if (tab.posicaoValida(pos) && existeInimigo(pos)) // se a posição for valida e se existe inimigo para capturar...
                 {
                     mat[pos.linha, pos.coluna] = true; // ...esta posição na matriz de movimentos fica true.
+                }
+
+                //#jogadaespecial en passant para as peças pretas
+
+                // se a posição desse peão for a linha igual a 4, há possibilidade de ocorrer o en passant
+                if (posicao.linha == 4)
+                {
+                    Posicao esquerda = new Posicao(posicao.linha, posicao.coluna - 1); // só terá En passant se ao lado tiver alguma peça vulnerável, nesse caso está considerando o lado esquerdo                   
+                    if (tab.posicaoValida(esquerda) && existeInimigo(esquerda) && tab.peca(esquerda) == partida.vulneravelEnPassant) // se esse lado for válido E se existe um inimigo lá E se a peça contida lá está vulnerável
+                    {
+                        mat[esquerda.linha +1, esquerda.coluna] = true; // se as condições forem atendidas, a matriz de movimentos possíveis do peão recebe uma nova posição possível 
+                    }
+
+
+                    Posicao direita = new Posicao(posicao.linha, posicao.coluna + 1); // só terá En passant se ao lado tiver alguma peça vulnerável, nesse caso está considerando o lado direito
+                    if (tab.posicaoValida(direita) && existeInimigo(direita) && tab.peca(direita) == partida.vulneravelEnPassant) // se esse lado for válido E se existe um inimigo lá E se a peça contida lá está vulnerável
+                    {
+                        mat[direita.linha +1, direita.coluna] = true; // se as condições forem atendidas, a matriz de movimentos possíveis do peão recebe uma nova posição possível 
+                    }
                 }
             }
 

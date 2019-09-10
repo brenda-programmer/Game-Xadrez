@@ -15,6 +15,9 @@ namespace xadrez
         private HashSet<Peca> capturadas; // esse conjunto vai guardar as peças capturadas
         public bool xeque { get; private set; } // indica se a partida está em xeque
 
+        public Peca vulneravelEnPassant { get; private set; } // quando um peão for movido a primeira vez duas casas, essa peça será armazenada nesta variável pois ela está vulnerável a tomar o en passant no próximo turno
+
+
         public PartidaDeXadrez()
         {
             tab = new Tabuleiro(8, 8);
@@ -22,6 +25,7 @@ namespace xadrez
             jogadorAtual = Cor.Branca; // no inicio de uma partida quem começa são sempre as brancas
             terminada = false; // no inicio de uma partida ela não está terminada
             xeque = false;
+            vulneravelEnPassant = null;
             pecas = new HashSet<Peca>();
             capturadas = new HashSet<Peca>();
             colocarPecas();
@@ -61,6 +65,27 @@ namespace xadrez
                 tab.colocarPeca(T, destinoT); //coloca a torre na posição de destino definida
             }
 
+            // #joagadaespecial en passant
+            if(p is Peao)
+            {
+                if(origem.coluna != destino.coluna && pecaCapturada==null) // se o peão se moveu diagonalmente E não capturou nenhuma peça significa que realizou um En passant
+                {
+                    Posicao posP; // peça que será capturada
+                    if (p.cor == Cor.Branca) // se esse peão que se moveu for branco
+                    {
+                        posP = new Posicao(destino.linha + 1, destino.coluna); // a peça que for capturada tem que estar uma casa a baixo desse peão branco que foi movido
+
+                    }
+                    else // se esse peão que se moveu for preto
+                    {
+                        posP = new Posicao(destino.linha - 1, destino.coluna); // a peça que for capturada tem que estar uma casa a cima desse peão preto que foi movido
+                    }
+
+                    pecaCapturada = tab.retirarPeca(posP);
+                    capturadas.Add(pecaCapturada);
+                }
+            }
+
             return pecaCapturada;
         }
 
@@ -96,6 +121,25 @@ namespace xadrez
                 T.derementarQteMovimentos(); //decrementa a quantidade de movimentos dessa torre
                 tab.colocarPeca(T, origemT); //recoloca a torre na posição de origem definida
             }
+
+            // #jogadaespecial en passant
+            if(p is Peao)
+            {
+                if(origem.coluna != destino.coluna && pecaCapturada == vulneravelEnPassant) // se o peão se moveu diagonalmente E não capturou nenhuma peça significa que realizou um En passant
+                {
+                    Peca peao = tab.retirarPeca(destino); // retira o peao do tabuleiro
+                    Posicao posP;
+                    if (p.cor == Cor.Branca) // se esse peão que se moveu for branco
+                    {
+                        posP = new Posicao(3, destino.coluna);
+                    }
+                    else // se foi o peão preto que se moveu
+                    {
+                        posP = new Posicao(4, destino.coluna);
+                    }
+                    tab.colocarPeca(peao, posP); // coloca o peão que tinha sido retirado de volta no tabuleiro na posição posP
+                }
+            }
         }
 
         public void realizaJogada(Posicao origem, Posicao destino)
@@ -125,6 +169,18 @@ namespace xadrez
             {
                 turno++; // passa para o próximo turno
                 mudaJogador(); // troca o jogador
+            }
+
+            Peca p = tab.peca(destino); // qual a peça que foi movida
+
+            // #jogadaespecial en passant
+            if(p is Peao && (destino.linha==origem.linha-2 || destino.linha == origem.linha + 2)) // se a peça que foi movida é um peão E se ela duas linhas a mais OU a menos
+            {
+                vulneravelEnPassant = p; // se atender as condições significa que a peça está vulnerável a tomar o En passant no próximo turno
+            }
+            else
+            {
+                vulneravelEnPassant = null; // se não atender as condições significa que ninguém está vulnerável a tomar o En passant
             }
             
         }
@@ -303,14 +359,14 @@ namespace xadrez
             colocarNovaPeca('f', 1, new Bispo(Cor.Branca, tab));
             colocarNovaPeca('g', 1, new Cavalo(Cor.Branca, tab));
             colocarNovaPeca('h', 1, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('a', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('b', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('c', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('d', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('e', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('f', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('g', 2, new Peao(Cor.Branca, tab));
-            colocarNovaPeca('h', 2, new Peao(Cor.Branca, tab));
+            colocarNovaPeca('a', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('b', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('c', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('d', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('e', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('f', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('g', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('h', 2, new Peao(Cor.Branca, tab, this));
 
 
             colocarNovaPeca('a', 8, new Torre(Cor.Preta, tab));
@@ -321,14 +377,14 @@ namespace xadrez
             colocarNovaPeca('f', 8, new Bispo(Cor.Preta, tab));
             colocarNovaPeca('g', 8, new Cavalo(Cor.Preta, tab));
             colocarNovaPeca('h', 8, new Torre(Cor.Preta, tab));
-            colocarNovaPeca('a', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('b', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('c', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('d', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('e', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('f', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('g', 7, new Peao(Cor.Preta, tab));
-            colocarNovaPeca('h', 7, new Peao(Cor.Preta, tab));
+            colocarNovaPeca('a', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('b', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('c', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('d', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('e', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('f', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('g', 7, new Peao(Cor.Preta, tab, this));
+            colocarNovaPeca('h', 7, new Peao(Cor.Preta, tab, this));
 
 
         }
