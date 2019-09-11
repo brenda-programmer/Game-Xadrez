@@ -119,7 +119,8 @@ namespace xadrez
         // #jogadaespecial promocao
         public static string lerPromocao()
         {
-            Console.WriteLine("PROMOÇÃO! Escolha um número: 1- Dama, 2- Bispo, 3- Torre, 4- Cavalo: ");
+            Console.WriteLine();
+            Console.WriteLine("PROMOÇÃO! Escolha uma peça: 1- Dama, 2- Bispo, 3- Torre, 4- Cavalo: ");
             string escolha = Console.ReadLine();
 
             return escolha;

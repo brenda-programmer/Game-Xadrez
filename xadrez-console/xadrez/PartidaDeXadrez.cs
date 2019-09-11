@@ -18,7 +18,6 @@ namespace xadrez
         public Peca vulneravelEnPassant { get; private set; } // quando um peão for movido a primeira vez duas casas, essa peça será armazenada nesta variável pois ela está vulnerável a tomar o en passant no próximo turno
         public Peca pecaPromocao { get; private set; } // guarda a peça escolhida na jogada especial promoção do peão
 
-        public bool promocao { get; private set; } // indica se ocoreu ou não a jogada especial promoção do peão
 
         public PartidaDeXadrez()
         {
@@ -27,7 +26,6 @@ namespace xadrez
             jogadorAtual = Cor.Branca; // no inicio de uma partida quem começa são sempre as brancas
             terminada = false; // no inicio de uma partida ela não está terminada
             xeque = false;
-            promocao = false;
             vulneravelEnPassant = null;
             pecaPromocao = null;
             pecas = new HashSet<Peca>();
@@ -163,20 +161,16 @@ namespace xadrez
             {
                 if ((p.cor == Cor.Branca && destino.linha == 0) || (p.cor == Cor.Preta && destino.linha == 7)) // se foi um peão branco que chegou na linha 0 OU foi um peão preto que chegou na linha 7, significa que é uma jogada de promoção
                 {
-                    promocao = true;
                     p = tab.retirarPeca(destino); // esse peão é retirado do tabuleiro
                     pecas.Remove(p); // remove ele do conjunto de peças em jogo
-               
+
                     // Peca dama = new Dama(p.cor,tab);// cria uma nova rainha da mesma cor do peão
-                    Peca promovida= EscolhePromocao(p); // acessa o método que relaciona o que foi digitado pelo usuário com as peças da promoção, a peça escolhida é guardada na variável promovida
+                    Peca promovida = EscolhePromocao(p); // acessa o método que relaciona o que foi digitado pelo usuário com as peças da promoção, a peça escolhida é guardada na variável promovida
 
                     tab.colocarPeca(promovida,destino);// coloca a peça promovida no tabuleiro - troca-se o peão pela peça
                     pecas.Add(promovida);
                 }
-                else
-                {
-                    promocao = false;
-                }
+               
             }
 
             if (estaEmXeque(adversaria(jogadorAtual))) // se o jogador adversário estiver em xeque
@@ -215,10 +209,11 @@ namespace xadrez
         public Peca EscolhePromocao(Peca peao)
         {
             string s = Tela.lerPromocao();
+
             switch (s)
             {
                 case "1":
-                    pecaPromocao =  new Dama(peao.cor, tab);
+                    pecaPromocao = new Dama(peao.cor, tab);
                     break;
                 case "2":
                     pecaPromocao = new Bispo(peao.cor, tab);
@@ -232,9 +227,11 @@ namespace xadrez
 
             }
 
+
             return pecaPromocao;
         }
 
+       
         //método que testa se a posição de origem digitada é válida
         public void validarPosicaoDeOrigem(Posicao pos)
         {
@@ -409,7 +406,7 @@ namespace xadrez
             colocarNovaPeca('f', 1, new Bispo(Cor.Branca, tab));
             colocarNovaPeca('g', 1, new Cavalo(Cor.Branca, tab));
             colocarNovaPeca('h', 1, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('a', 6, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('a', 2, new Peao(Cor.Branca, tab, this));
             colocarNovaPeca('b', 2, new Peao(Cor.Branca, tab, this));
             colocarNovaPeca('c', 2, new Peao(Cor.Branca, tab, this));
             colocarNovaPeca('d', 2, new Peao(Cor.Branca, tab, this));
