@@ -16,7 +16,9 @@ namespace xadrez
         public bool xeque { get; private set; } // indica se a partida está em xeque
 
         public Peca vulneravelEnPassant { get; private set; } // quando um peão for movido a primeira vez duas casas, essa peça será armazenada nesta variável pois ela está vulnerável a tomar o en passant no próximo turno
+        public Peca pecaPromocao { get; private set; } // guarda a peça escolhida na jogada especial promoção do peão
 
+        public bool promocao { get; private set; } // indica se ocoreu ou não a jogada especial promoção do peão
 
         public PartidaDeXadrez()
         {
@@ -25,7 +27,9 @@ namespace xadrez
             jogadorAtual = Cor.Branca; // no inicio de uma partida quem começa são sempre as brancas
             terminada = false; // no inicio de uma partida ela não está terminada
             xeque = false;
+            promocao = false;
             vulneravelEnPassant = null;
+            pecaPromocao = null;
             pecas = new HashSet<Peca>();
             capturadas = new HashSet<Peca>();
             colocarPecas();
@@ -159,16 +163,23 @@ namespace xadrez
             {
                 if ((p.cor == Cor.Branca && destino.linha == 0) || (p.cor == Cor.Preta && destino.linha == 7)) // se foi um peão branco que chegou na linha 0 OU foi um peão preto que chegou na linha 7, significa que é uma jogada de promoção
                 {
+                    promocao = true;
                     p = tab.retirarPeca(destino); // esse peão é retirado do tabuleiro
                     pecas.Remove(p); // remove ele do conjunto de peças em jogo
+               
+                    // Peca dama = new Dama(p.cor,tab);// cria uma nova rainha da mesma cor do peão
+                    Peca promovida= EscolhePromocao(p); // acessa o método que relaciona o que foi digitado pelo usuário com as peças da promoção, a peça escolhida é guardada na variável promovida
 
-                    Peca dama = new Dama(p.cor,tab);// cria uma nova rainha da mesma cor do peão
-                    tab.colocarPeca(dama,destino);// coloca a rainha no tabuleiro - troca-se o peão pela rainha
-                    pecas.Add(dama);
+                    tab.colocarPeca(promovida,destino);// coloca a peça promovida no tabuleiro - troca-se o peão pela peça
+                    pecas.Add(promovida);
+                }
+                else
+                {
+                    promocao = false;
                 }
             }
 
-            if (estaEmXeque(adversária(jogadorAtual))) // se o jogador adversário estiver em xeque
+            if (estaEmXeque(adversaria(jogadorAtual))) // se o jogador adversário estiver em xeque
             {
                 xeque = true;
             }
@@ -177,7 +188,7 @@ namespace xadrez
                 xeque = false;
             }
 
-            if (testeXequeMate(adversária(jogadorAtual))) // Se o jogador adversário estiver em xeque-mate
+            if (testeXequeMate(adversaria(jogadorAtual))) // Se o jogador adversário estiver em xeque-mate
             {
                 terminada = true;
             }
@@ -197,6 +208,31 @@ namespace xadrez
                 vulneravelEnPassant = null; // se não atender as condições significa que ninguém está vulnerável a tomar o En passant
             }
             
+        }
+
+        // # jogadaespecial promocao 
+        //Método que possibilita a escolha da peça da promoção
+        public Peca EscolhePromocao(Peca peao)
+        {
+            string s = Tela.lerPromocao();
+            switch (s)
+            {
+                case "1":
+                    pecaPromocao =  new Dama(peao.cor, tab);
+                    break;
+                case "2":
+                    pecaPromocao = new Bispo(peao.cor, tab);
+                    break;
+                case "3":
+                    pecaPromocao = new Torre(peao.cor, tab);
+                    break;
+                case "4":
+                    pecaPromocao = new Cavalo(peao.cor, tab);
+                    break;
+
+            }
+
+            return pecaPromocao;
         }
 
         //método que testa se a posição de origem digitada é válida
@@ -272,7 +308,7 @@ namespace xadrez
         }
 
         //Esse método vai retornar a cor adversária a cor colocada
-        private Cor adversária(Cor cor)
+        private Cor adversaria(Cor cor)
         {
             if(cor== Cor.Branca)
             {
@@ -307,7 +343,7 @@ namespace xadrez
                 throw new TabuleiroException("Não tem rei da cor " + cor + " no tabuleiro!");
             }
 
-            foreach(Peca x in pecasEmJogo(adversária(cor))) //verifica os movimentos possíveis de todas as peças adversárias para ver se algum deles bate com o rei
+            foreach(Peca x in pecasEmJogo(adversaria(cor))) //verifica os movimentos possíveis de todas as peças adversárias para ver se algum deles bate com o rei
             {
                 bool[,] mat = x.movimentosPossiveis(); // movimentos possíveis de uma determinada peça adversária
 
@@ -373,7 +409,7 @@ namespace xadrez
             colocarNovaPeca('f', 1, new Bispo(Cor.Branca, tab));
             colocarNovaPeca('g', 1, new Cavalo(Cor.Branca, tab));
             colocarNovaPeca('h', 1, new Torre(Cor.Branca, tab));
-            colocarNovaPeca('a', 2, new Peao(Cor.Branca, tab, this));
+            colocarNovaPeca('a', 6, new Peao(Cor.Branca, tab, this));
             colocarNovaPeca('b', 2, new Peao(Cor.Branca, tab, this));
             colocarNovaPeca('c', 2, new Peao(Cor.Branca, tab, this));
             colocarNovaPeca('d', 2, new Peao(Cor.Branca, tab, this));

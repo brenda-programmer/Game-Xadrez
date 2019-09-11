@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using xadrez;
 
-namespace xadrez_console
+namespace xadrez
 {
     class Tela
     {
@@ -21,6 +21,7 @@ namespace xadrez_console
                 {
                     Console.WriteLine("XEQUE!");
                 }
+                
             }
             else
             {
@@ -113,6 +114,15 @@ namespace xadrez_console
             char coluna = s[0];//pega somente o que estiver na string na posição zero
             int linha = int.Parse(s[1] + ""); // pega somente o que tem na string na posição 1 e transforma para inteiro (concatena com o espaço para forçar que é string)
             return new PosicaoXadrez(coluna, linha);
+        }
+
+        // #jogadaespecial promocao
+        public static string lerPromocao()
+        {
+            Console.WriteLine("PROMOÇÃO! Escolha um número: 1- Dama, 2- Bispo, 3- Torre, 4- Cavalo: ");
+            string escolha = Console.ReadLine();
+
+            return escolha;
         }
 
         public static void imprimirPeca(Peca peca)
